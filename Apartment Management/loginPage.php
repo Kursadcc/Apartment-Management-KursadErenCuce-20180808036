@@ -42,7 +42,7 @@
       position: absolute;
       place-content: center;
       width: calc(100% - 40px);
-      background-image: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');
+      
     }
 
     @media (max-width: 767px) {
@@ -176,6 +176,7 @@ session_start();
 ob_start();
 require('db_connection.php');
 $emptyError="";
+if(isset($_POST['uname'])){
 if($_POST['uname']=="" or $_POST['pwd']==""){
     $emptyError="Please enter user name and password.";
 }else{ 
@@ -212,6 +213,7 @@ if ($result->num_rows > 0) {
   } else {
     $emptyError="Wrong user name or password.";
   }
+}
 }
 }
 ?>

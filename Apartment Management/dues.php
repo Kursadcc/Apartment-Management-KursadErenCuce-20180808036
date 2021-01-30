@@ -241,8 +241,8 @@ a:hover {
         </li>
       </ul>
     </div>
-    <a style="margin-right:2%;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></a>
-    <a style="margin-right:2%;" class="nav-link" href="logout.php">Log out</a>
+    <p style="margin-right:2%;color:white;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></p>
+    <button style="width:129px" class="btn btn-danger"><a style="margin-right:2%;color:white;" class="nav-link" href="logout.php">Log out</a></button>
   </nav></br></br>
   <?php 
   require('db_connection.php');
