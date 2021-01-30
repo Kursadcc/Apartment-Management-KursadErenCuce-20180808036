@@ -3,13 +3,15 @@ require("control.php");
 $loginResult=checkLogin();
 if(!$loginResult){
     header("Refresh: 2; url=loginPage.php");
-}else{
+  }else if($_SESSION["role"]!="user"){
+    header("Refresh: 2; url=loginPage.php");
+  }else{
     echo '<style type="text/css">
-    body {
-        display: block!important;
-    }
-    </style>';
-}
+      body {
+          display: block!important;
+      }
+      </style>';
+  }
 ?>
 <html>
 <body id="body" style="display: none;">

@@ -200,11 +200,13 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
       if($count==1 and  $row["userrole"]=="admin"){
         $_SESSION["login"]="true";
+        $_SESSION["role"]="admin";
         $_SESSION["userName"]=$username;
         $_SESSION["password"]=$password;
         header('Location:announcements.php ' );
       } elseif($count==1 and $row["userrole"]=="user"){
         $_SESSION["login"]="true";
+        $_SESSION["role"]="user";
         $_SESSION["userName"]=$username;
         $_SESSION["password"]=$password;
         header('Location:announcements1.php '); 

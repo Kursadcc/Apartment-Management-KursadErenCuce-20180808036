@@ -2,9 +2,11 @@
 require("control.php");
 $loginResult=checkLogin();
 if(!$loginResult){
-    header("Refresh: 2; url=loginPage.php");
+  header("Refresh: 2; url=loginPage.php");
+}else if($_SESSION["role"]!="admin"){
+  header("Refresh: 2; url=loginPage.php");
 }else{
-    echo '<style type="text/css">
+  echo '<style type="text/css">
     body {
         display: block!important;
     }
