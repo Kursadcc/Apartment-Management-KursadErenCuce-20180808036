@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-<body id="body" style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%; display: none;">
+<body id="body" style="display: none;">
 <style>
 #customers {
   font-family: Arial, Helvetica, sans-serif;
@@ -208,9 +208,10 @@ a:hover {
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"> </script>
-<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' />
+<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' /></br>
+<h1 style="margin-left: 32%;" >Apartment Management<img src="logo.png" alt="logo"></h1>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Apartment Management</a>
+    <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -219,8 +220,15 @@ a:hover {
         <li class="nav-item ">
           <a class="nav-link" href="announcements.php">Announcements</a>
         </li>
+        <li>
+          <a class="nav-link" href="contact.php">Contact</a>
+        </li>
+        </ul>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
         <li class="nav-item active">
-          <a class="nav-link" href="economy.php">Economy<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="economy.php">Income/Expense<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="dues.php">Dues</a>
@@ -230,16 +238,63 @@ a:hover {
           <a class="nav-link" href="showList.php">Resident List</a>
         </li>
         <li class="nav-item" style="margin-right:10px;">
-          <a class="nav-link" href="logout.php">Log out</a>
         </li>
       </ul>
     </div>
+    <a style="margin-right:2%;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></a>
+    <a style="margin-right:2%;" class="nav-link" href="logout.php">Log out</a>
   </nav>
-  <table id="customers">
-  <tr>
-    <th>Income/Expense</th>
-    <th>Get by/Used for</th>
-    <th>Amount</th>
+
+  <div style="margin-left: 39%;" id="piechart"></div>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+  // Load google charts
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+  // Draw the chart and set the chart values
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['Task', 'Hours per Day'],
+        ['Income', <?php 
+          require('db_connection.php');
+          $sql = mysqli_query($connection,"SELECT SUM(income_amount) as total FROM income") or die(mysqli_error($connection));;
+          $row = mysqli_fetch_array($sql);
+          $sum = $row['total'];
+          echo $sum;
+        ?>],
+        ['Expense', <?php 
+          require('db_connection.php');
+          $sql = mysqli_query($connection,"SELECT SUM(expense_amount) as total FROM expense") or die(mysqli_error($connection));;
+          $row = mysqli_fetch_array($sql);
+          $sum = $row['total'];
+          echo $sum;
+        ?>],
+      ]);
+
+  // Optional; add a title and set the width and height of the chart
+    var options = {'title':'Income/Expense', 'width':550, 'height':400};
+
+  // Display the chart inside the <div> element with id="piechart"
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    chart.draw(data, options);
+    }
+</script>
+
+  <ul style="border-color:#222;width:70%;margin-left:15%;" class="nav nav-pills nav-fill">
+  <li class="nav-item">
+    <a class="nav-link active" href="economy.php">Income</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="expense.php">Expense</a>
+  </li>
+</ul>
+  <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
+  <tr style='background-color:rgb(25, 21, 53);color:white;'>
+    <th>Explanation</th>
+    <th>Income Amount</th>
+    <th>Income Date</th>
+    <th><button onclick="location.href='addEconomy.php'" class="btn btn-primary">Add</button></th>
   </tr>
 
 <?php
@@ -251,9 +306,9 @@ a:hover {
    function delete($data){
    require('db_connection.php'); 
    
-   $sql1="DELETE FROM economy WHERE ecoId=$data";
+   $sql1="DELETE FROM income WHERE id=$data";
    $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
-   $sql2="SELECT * FROM economy WHERE ecoId=$data";
+   $sql2="SELECT * FROM income WHERE id=$data";
    $result2=mysqli_query($connection, $sql2) or die(mysqli_error($connection));
    if ($result2->num_rows > 0) {
        echo "<script>alert('Expense could not deleted.');</script>";
@@ -262,13 +317,13 @@ a:hover {
 
  }
   require('db_connection.php'); 
-  $sql = "SELECT * FROM economy ";
+  $sql = "SELECT * FROM income ";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
   
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['type']}</td><td >{$row['used']}</td><td >{$row['amount']} ₺</td><td style='width: 50px;'><form action='economy.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["ecoId"]."'/></form></td></tr></br>";
+        echo "<tr><td>{$row['explanation']}</td><td >{$row['income_date']}</td><td >{$row['income_amount']} ₺</td><td style='width: 50px;'><form action='economy.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["id"]."'/></form></td></tr></br>";
     }
     
 } else {
@@ -276,6 +331,5 @@ a:hover {
 }
 $connection->close();
 ?>
-<button style="margin-left: 77.3%;" onclick="location.href='addEconomy.php'" class="btn btn-primary">Add</button>
 </body>
 </html>

@@ -217,77 +217,66 @@ a:hover {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="announcements.php">Announcements</a>
+        <li class="nav-item ">
+          <a class="nav-link" href="announcements1.php">Announcements</a>
         </li>
         <li>
-          <a class="nav-link" href="contact.php">Contact</a>
+          <a class="nav-link" href="contact1.php">Contact</a>
         </li>
-        </ul>
+      </ul>
     </div>
-    <div  style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
+    <div style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item ">
-          <a class="nav-link" href="economy.php">Income/Expense</a>
+          <a class="nav-link" href="economy1.php">Income/Expense</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="dueHistory1.php">Dues<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="dues.php">Dues</a>
+          <a class="nav-link" href="showList1.php">Resident List</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="showList.php">Resident List</a>
-        </li>
+        
         <li class="nav-item" style="margin-right:10px;">
         </li>
       </ul>
     </div>
     <a style="margin-right:2%;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></a>
     <a style="margin-right:2%;" class="nav-link" href="logout.php">Log out</a>
-  </nav>
-  <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
+  </nav></br></br>
+<table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
   <tr style='background-color:rgb(25, 21, 53);color:white;'>
-    
-    <th>Date Shared</th>
-    <th>Content</th>
-    <th><button onclick="location.href='addAnnouncement.php'" class="btn btn-primary">Add</button></th>
+    <th>Door Number</th>
+    <th>Payment Date</th>
+    <th>Paid Amount</th>
+    <th>Remaining Debt</th>
   </tr>
-
-  <?php
-  $id="";
-  if($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["delete"])){
-    $id=$_POST["id"];
-    delete($id);
-  }
-    function delete($data){
-    require('db_connection.php'); 
-    
-    $sql1="DELETE FROM announcement WHERE contentId=$data";
-    $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
-    $sql2="SELECT * FROM announcement WHERE contentId=$data";
-    $result2=mysqli_query($connection, $sql2) or die(mysqli_error($connection));
-    if ($result2->num_rows > 0) {
-        echo "<script>alert('Announcement could not deleted.');</script>";
-    }else
-        echo "<script>alert('Announcement successfully deleted.');</script>";
-
-  }
-
-  require('db_connection.php'); 
-  $sql = "SELECT * FROM announcement ORDER BY announceDate DESC ";
+<?php
+  require('db_connection.php');
+  $userName=$_SESSION["userName"];
+  $sql1="SELECT doornumber FROM resident WHERE user_name='$userName'";
+  $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
+  if ($result1->num_rows > 0) {
+    $row = $result1->fetch_assoc();
+    $doorNumber=$row['doornumber'];
+} else {
+    echo "0 results";
+}
+  
+  $sql = "SELECT * FROM due_history WHERE door_number='$doorNumber'";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
   
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['announceDate']}</td><td >{$row['content']}</td><td style='width: 50px;'><form action='announcements.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["contentId"]."'/></form></td></tr></br>";
+        echo "<tr><td>NO: {$row['door_number']}</td><td>{$row['payment_date']}</td><td>{$row['paid_amount']} ₺</td><td>{$row['remaining_debt']} ₺</td></tr>";
     }
-    
 } else {
-  echo "0 results";
+    echo "0 results";
 }
 $connection->close();
-
- ?>
-  
+      
+?>
 
 
 </body>

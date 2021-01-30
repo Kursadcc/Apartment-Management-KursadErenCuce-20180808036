@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-<body id="body" style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%; display: none;">
+<body id="body" style="display: none;">
 <style>
 #customers {
   font-family: Arial, Helvetica, sans-serif;
@@ -208,19 +208,27 @@ a:hover {
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"> </script>
-<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' />
+<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' /></br>
+<h1 style="margin-left: 32%;" >Apartment Management<img src="logo.png" alt="logo"></h1>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Apartment Management</a>
+    <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item ">
           <a class="nav-link" href="announcements.php">Announcements</a>
         </li>
+        <li>
+          <a class="nav-link" href="contact.php">Contact</a>
+        </li>
+      </ul>
+    </div>
+    <div style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
         <li class="nav-item ">
-          <a class="nav-link" href="economy.php">Economy</a>
+          <a class="nav-link" href="economy.php">Income/Expense</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="dues.php">Dues<span class="sr-only">(current)</span></a>
@@ -230,28 +238,54 @@ a:hover {
         </li>
         
         <li class="nav-item" style="margin-right:10px;">
-          <a class="nav-link" href="logout.php">Log out</a>
         </li>
       </ul>
     </div>
-  </nav>
+    <a style="margin-right:2%;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></a>
+    <a style="margin-right:2%;" class="nav-link" href="logout.php">Log out</a>
+  </nav></br></br>
+  <?php 
+  require('db_connection.php');
+  if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if (preg_match("/^[0-9-' ]*$/", $_POST["due"])) {
+      $due=$_POST["due"];
+      $query = "UPDATE due SET  remaining_debt=remaining_debt+$due ";
+      $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
+    }else{
+      echo "<script>alert('Due should be number.');</script>";
+    }
+  }
+  ?>
 
-  <table id="customers">
-  <tr>
+  <ul style="border-color:#222;width:70%;margin-left:15%;" class="nav nav-pills nav-fill">
+  <li class="nav-item">
+    <a class="nav-link active" href="dues.php">Dues</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="dueHistory.php">Due History</a>
+  </li>
+</ul></br></br>
+
+  <form style="margin-left: 72.3%;" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+    <p class="contact"><input name="due" placeholder="Due" tabindex="1" type="text" value="<?php echo isset($_POST["due"]) ? $_POST["due"] : ''; ?>"><input class='btn btn-primary' type='submit' name='add' value='Add' /></p>
+  </form>
+  <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
+  <tr style='background-color:rgb(25, 21, 53);color:white;'>
     <th>Door Number</th>
     <th>Payment Date</th>
     <th>Paid Amount</th>
     <th>Remaining Debt</th>
+    <th></th>
   </tr>
 <?php
   require('db_connection.php');
-  $sql = "SELECT * FROM dues";
+  $sql = "SELECT * FROM due";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
   
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>NO: {$row['doorNumber']}</td><td>{$row['datePaid']}</td><td>{$row['quantity']} ₺</td><td>{$row['debt']} ₺</td><td><form action='addPayment.php' method='post'><input class='btn btn-primary' type='submit' name='payment' value='Payment' /><input type='hidden' name='id' value='".$row["ID"]."'/></form></td></tr>";
+        echo "<tr><td>NO: {$row['door_number']}</td><td>{$row['payment_date']}</td><td>{$row['paid_amount']} ₺</td><td>{$row['remaining_debt']} ₺</td><td><form action='addPayment.php' method='post'><input class='btn btn-primary' type='submit' name='payment' value='Payment' /><input type='hidden' name='id' value='".$row["door_number"]."'/></form></td></tr>";
     }
 } else {
     echo "0 results";
@@ -259,10 +293,5 @@ a:hover {
 $connection->close();
       
 ?>
-<button style="margin-top:2%; margin-left: 69.5%;" onclick="location.href='addDue.php'"  class="btn btn-primary">Add</button>
-
-
-
-
 </body>
 </html>

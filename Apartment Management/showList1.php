@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-<body id="body" style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%; display: none;">
+<body id="body" style="display: none;">
 <style>
 #customers {
   font-family: Arial, Helvetica, sans-serif;
@@ -208,9 +208,10 @@ a:hover {
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"> </script>
-<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' />
+<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' /></br>
+<h1 style="margin-left: 32%;" >Apartment Management<img src="logo.png" alt="logo"></h1>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Apartment Management</a>
+    <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -219,23 +220,42 @@ a:hover {
         <li class="nav-item ">
           <a class="nav-link" href="announcements1.php">Announcements</a>
         </li>
+        <li>
+          <a class="nav-link" href="contact1.php">Contact</a>
+        </li>
+        </ul>
+    </div>
+    <div style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
         <li class="nav-item ">
-          <a class="nav-link" href="economy1.php">Economy</a>
+          <a class="nav-link" href="economy1.php">Income/Expense</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="dues1.php">Dues</a>
+          <a class="nav-link" href="dueHistory1.php">Dues</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="showList1.php">Resident List<span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item" style="margin-right:10px;">
-          <a class="nav-link" href="logout.php">Log out</a>
+        <li class="nav-item" style="margin-right:10px;">  
         </li>
       </ul>
     </div>
-  </nav>
-  <table id="customers">
-  <tr>
+    <a style="margin-right:2%;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></a>
+    <a style="margin-right:2%;" class="nav-link" href="logout.php">Log out</a>
+  </nav></br></br>
+  <ul style="border-color:#222;width:70%;margin-left:15%;" class="nav nav-pills nav-fill">
+  <li class="nav-item">
+    <a class="nav-link active" href="showList1.php">Current Residents</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="movedList1.php">Moved Residents</a>
+  </li>
+</ul></br></br>
+
+
+
+  <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
+  <tr style='background-color:rgb(25, 21, 53);color:white;'>
     <th>User Name</th>
     <th>First Name</th>
     <th>Last Name</th>
@@ -252,7 +272,23 @@ a:hover {
  
   
   <?php 
- 
+  if($_SERVER["REQUEST_METHOD"] == "POST" ){
+    $id=$_POST["ID"];
+    delete($id);
+  }
+  function delete($data){
+    require('db_connection.php'); 
+    $sql="INSERT INTO moved_resident (first_name, last_name, email, phone_number, door_number ) SELECT firstname, lastname, email, phonenumber1, doornumber FROM resident WHERE id=$data";
+    $reuslt=mysqli_query($connection, $sql) or die(mysqli_error($connection));
+    $sql1="DELETE FROM resident WHERE id=$data";
+    $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
+    $sql2="SELECT * FROM resident WHERE id=$data";
+    $result2=mysqli_query($connection, $sql2) or die(mysqli_error($connection));
+    if ($result2->num_rows > 0) {
+        echo "<script>alert('User could not be deleted.');</script>";
+    }else
+        echo "<script>alert('User successfully deleted.');</script>";
+  }
   require('db_connection.php');
   $sql = "SELECT * FROM resident";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
@@ -260,7 +296,7 @@ a:hover {
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['user_name']}</td><td>{$row['firstname']}</td><td>{$row['lastname']}</td><td>{$row['email']}</td><td>{$row['userrole']}</td><td>{$row['phonenumber1']}</td><td>{$row['phonenumber2']}</td><td>{$row['doornumber']}</td><td>{$row['familymembercount']}</td><td>{$row['gender']}</td></tr>";
+        echo "<tr ><td>{$row['user_name']}</td><td>{$row['firstname']}</td><td>{$row['lastname']}</td><td>{$row['email']}</td><td>{$row['userrole']}</td><td>{$row['phonenumber1']}</td><td>{$row['phonenumber2']}</td><td>{$row['doornumber']}</td><td>{$row['familymembercount']}</td><td>{$row['gender']}</td></tr>";
     }
 } else {
   echo "0 results";

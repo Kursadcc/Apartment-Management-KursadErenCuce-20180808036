@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-    <body style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%;display: none;">
+    <body style="display: none;">
         <style>
             .form{
 	background:#f1f1f1; width:470px; margin:0 auto; padding-left:50px; padding-top:20px; margin-top: 2%;

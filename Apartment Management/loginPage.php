@@ -176,7 +176,7 @@ session_start();
 ob_start();
 require('db_connection.php');
 $emptyError="";
-if($_POST['uname']=='' or $_POST['pwd']==''){
+if($_POST['uname']=="" or $_POST['pwd']==""){
     $emptyError="Please enter user name and password.";
 }else{ 
 if (isset($_POST['uname']) and isset($_POST['pwd']))

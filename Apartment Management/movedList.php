@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-<body id="body" style="display: none;">
+<body id="body"  display: none;>
 <style>
 #customers {
   font-family: Arial, Helvetica, sans-serif;
@@ -217,7 +217,7 @@ a:hover {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item active">
+        <li class="nav-item ">
           <a class="nav-link" href="announcements.php">Announcements</a>
         </li>
         <li>
@@ -225,7 +225,7 @@ a:hover {
         </li>
         </ul>
     </div>
-    <div  style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
+    <div style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item ">
           <a class="nav-link" href="economy.php">Income/Expense</a>
@@ -233,62 +233,74 @@ a:hover {
         <li class="nav-item">
           <a class="nav-link" href="dues.php">Dues</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="showList.php">Resident List</a>
+        <li class="nav-item active">
+          <a class="nav-link" href="showList.php">Resident List<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item" style="margin-right:10px;">
+          
         </li>
       </ul>
     </div>
     <a style="margin-right:2%;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></a>
     <a style="margin-right:2%;" class="nav-link" href="logout.php">Log out</a>
-  </nav>
+  </nav></br></br>
+  <ul style="border-color:#222;width:70%;margin-left:15%;" class="nav nav-pills nav-fill">
+  <li style="border-color:#222;" class="nav-item">
+    <a class="nav-link" href="showList.php">Current Residents</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="movedList.php">Moved Residents</a>
+  </li>
+</ul></br></br>
+
+
+
   <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
   <tr style='background-color:rgb(25, 21, 53);color:white;'>
-    
-    <th>Date Shared</th>
-    <th>Content</th>
-    <th><button onclick="location.href='addAnnouncement.php'" class="btn btn-primary">Add</button></th>
-  </tr>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>E-mail</th>
+    <th>Phone Number</th>
+    <th>Door Number</th>
+    <th>Date</th>
 
-  <?php
-  $id="";
-  if($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["delete"])){
-    $id=$_POST["id"];
+  </tr>
+  
+
+ 
+  
+  <?php 
+  if($_SERVER["REQUEST_METHOD"] == "POST" ){
+    $id=$_POST["ID"];
     delete($id);
   }
-    function delete($data){
+  function delete($data){
     require('db_connection.php'); 
-    
-    $sql1="DELETE FROM announcement WHERE contentId=$data";
+    $sql="INSERT INTO moved_resident (first_name, last_name, email, phone_number, door_number ) SELECT firstname, lastname, email, phonenumber1, doornumber FROM resident WHERE id=$data";
+    $reuslt=mysqli_query($connection, $sql) or die(mysqli_error($connection));
+    $sql1="DELETE FROM resident WHERE id=$data";
     $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
-    $sql2="SELECT * FROM announcement WHERE contentId=$data";
+    $sql2="SELECT * FROM resident WHERE id=$data";
     $result2=mysqli_query($connection, $sql2) or die(mysqli_error($connection));
     if ($result2->num_rows > 0) {
-        echo "<script>alert('Announcement could not deleted.');</script>";
+        echo "<script>alert('User could not be deleted.');</script>";
     }else
-        echo "<script>alert('Announcement successfully deleted.');</script>";
-
+        echo "<script>alert('User successfully deleted.');</script>";
   }
-
-  require('db_connection.php'); 
-  $sql = "SELECT * FROM announcement ORDER BY announceDate DESC ";
+  require('db_connection.php');
+  $sql = "SELECT * FROM moved_resident";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
   
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['announceDate']}</td><td >{$row['content']}</td><td style='width: 50px;'><form action='announcements.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["contentId"]."'/></form></td></tr></br>";
+        echo "<tr ><td>{$row['first_name']}</td><td>{$row['last_name']}</td><td>{$row['email']}</td><td>{$row['phone_number']}</td><td>{$row['door_number']}</td><td>{$row['date']}</td></tr>";
     }
-    
 } else {
   echo "0 results";
 }
 $connection->close();
 
- ?>
-  
-
-
+  ?>
 </body>
 </html>

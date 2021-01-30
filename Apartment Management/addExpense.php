@@ -59,43 +59,75 @@ if(!$loginResult){
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <link rel='stylesheet' type='text/css' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' />
-
-    <?php
+    <?php 
+        $typeErr=$gbufErr=$amountErr="";
+        $errorCount=0;
+        $successMsg="";
         function clearForm()
         {
-            $_POST["date"]="";
-            $_POST["content"]="";
-        }
-        $error=1;
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $succesMsg="";
-            $date=$_POST['date'];
-            $content=$_POST['content'];
-            require('db_connection.php');
-            $query = "INSERT INTO `announcement`(`announceDate`, `content`) VALUES ( '".$date."','".$content."')";
-            $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
-            $succesMsg="Announcement is shared.";
-            $error=0;
-            clearForm();
-        }
 
+            $_POST["gbuf"]="";
+            $_POST["amount"]="";
+        }
+        function test_input($data)
+        {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+        }
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $errorCount=0;
+            $successMsg="";
+            if(empty($_POST["gbuf"])){
+                $gbufErr="This is required.";
+                $errorCount++;
+            }else{
+                $gbuf=$_POST["gbuf"];
+            }
+            if (empty($_POST["amount"])) {
+                $amountErr = "Amount is required";
+                $errorCount++;
+            } else {
+                $amount = test_input($_POST["amount"]);
+                if (!preg_match("/^[0-9-' ]*$/", $_POST["amount"])) {
+                    $amountErr = "Only digits allowed.";
+                    $errorCount++;
+                } 
+            }
+            if($errorCount==0){
+                require('db_connection.php');
+                $query = "INSERT INTO `expense`(`explanation`, `expense_amount`) VALUES ('".$gbuf."','".$amount."')";
+                $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
+                $successMsg="Information saved.";
+                clearform();
+            }else{
+                $succesMessage="Information could not be saved.";
+            }
+
+        }
     ?>
+
     <div  class="form">
     <?php   
-        if($error==0){
-      echo "<p style='margin-left:0%;width:25%;border-left: 6px solid green;background-color: lightgrey;'><bold>$succesMsg</bold></p>";
+        if($errorCount==0){
+            echo "<p style='margin-left:0%;width:25%;border-left: 6px solid green;background-color: lightgrey;'><bold>$successMsg</bold></p>";
+        }else{
+            echo "<p style='margin-left:0%;width:25%;border-left: 6px solid red;background-color: lightgrey;'><bold>$successMsg</bold></p>";   
         }
     ?>
     <form id="contactform" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"> 
-    	    <p class="contact"><label >Date</label></p> 
-            <input name="date" type="date">
-            <p class="contact"><label >Content</label></p> 
-            <textarea rows = "5" cols = "60" name = "content">Enter details here...</textarea>
+            <p class="contact"><label >Explanation<small style="color:red;" >* <?php echo $gbufErr ?></small></label></p> 
+            <input name="gbuf"  type="text" value="<?php echo isset($_POST["gbuf"]) ? $_POST["gbuf"] : ''; ?>" >
+            <p class="contact"><label >Expense Amount<small style="color:red;" >* <?php echo $amountErr ?></small></label></p> 
+            <input name="amount"  type="text" value="<?php echo isset($_POST["amount"]) ? $_POST["amount"] : ''; ?>" >
              
             <input class="buttom" name="submit" id="submit" tabindex="50" value="Submit" type="submit"> 
-            <input class="buttom"  onclick="location.href='announcements.php'" name="cancel" id="cancel" tabindex="50" value="Cancel" type="button">
+            <input class="buttom"  onclick="location.href='expense.php'" name="cancel" id="cancel" tabindex="50" value="Cancel" type="button">
     </form>
     </div>
-
+    
+    
+    
     </body>
 </html>

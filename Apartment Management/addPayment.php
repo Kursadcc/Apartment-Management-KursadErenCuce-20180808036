@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-    <body style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%;display: none;">
+    <body style="display: none;">
         <style>
             .form{
 	background:#f1f1f1; width:470px; margin:0 auto; padding-left:50px; padding-top:20px; margin-top: 2%;
@@ -74,13 +74,13 @@ if(!$loginResult){
         if(isset($_POST["paid"]) == false){
             require('db_connection.php');
             $id=$_POST["id"];
-            $sql = "SELECT * FROM dues WHERE ID='$id'";
+            $sql = "SELECT * FROM due WHERE door_number='$id'";
             $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
             if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                $_POST["remaining"]=$row["debt"];
-                $_POST["paid"]=$row["quantity"];
-                $_POST["date"]=$row["datePaid"];
+                $_POST["remaining"]=$row["remaining_debt"];
+                $_POST["paid"]=$row["paid_amount"];
+                $_POST["date"]=$row["payment_date"];
                 
             }
         }
@@ -110,7 +110,9 @@ if(!$loginResult){
         if($errorCount==0){
             require('db_connection.php');
             $id=$_POST["id"];
-            $query = "UPDATE dues SET datePaid='$date', quantity='$paid', debt='$sum' WHERE ID='$id'";
+            $query1="INSERT INTO due_history (door_number,paid_amount,remaining_debt) VALUES ('".$id."','".$paid."','".$sum."')";
+            $result1 = mysqli_query($connection, $query1) or die(mysqli_error($connection));
+            $query = "UPDATE due SET payment_date='$date', paid_amount='$paid', remaining_debt='$sum' WHERE door_number='$id'";
             $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
             $succesMessage="Payment received.";
         }else{

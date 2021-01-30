@@ -217,10 +217,10 @@ a:hover {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item active">
+        <li class="nav-item">
           <a class="nav-link" href="announcements.php">Announcements</a>
         </li>
-        <li>
+        <li class="nav-item active">
           <a class="nav-link" href="contact.php">Contact</a>
         </li>
         </ul>
@@ -245,50 +245,45 @@ a:hover {
   </nav>
   <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
   <tr style='background-color:rgb(25, 21, 53);color:white;'>
-    
-    <th>Date Shared</th>
-    <th>Content</th>
-    <th><button onclick="location.href='addAnnouncement.php'" class="btn btn-primary">Add</button></th>
+    <th>User Name</th>
+    <th>Request/Complaint</th>
+    <th>Share Date</th>
+    <th></th>
   </tr>
 
-  <?php
-  $id="";
-  if($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["delete"])){
-    $id=$_POST["id"];
-    delete($id);
-  }
-    function delete($data){
-    require('db_connection.php'); 
-    
-    $sql1="DELETE FROM announcement WHERE contentId=$data";
-    $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
-    $sql2="SELECT * FROM announcement WHERE contentId=$data";
-    $result2=mysqli_query($connection, $sql2) or die(mysqli_error($connection));
-    if ($result2->num_rows > 0) {
-        echo "<script>alert('Announcement could not deleted.');</script>";
-    }else
-        echo "<script>alert('Announcement successfully deleted.');</script>";
+<?php
+ $id="";
+ if($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["delete"])){
+   $id=$_POST["id"];
+   delete($id);
+ }
+   function delete($data){
+   require('db_connection.php'); 
+   
+   $sql1="DELETE FROM contact WHERE id=$data";
+   $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
+   $sql2="SELECT * FROM contact WHERE id=$data";
+   $result2=mysqli_query($connection, $sql2) or die(mysqli_error($connection));
+   if ($result2->num_rows > 0) {
+       echo "<script>alert('Message could not deleted.');</script>";
+   }else
+       echo "<script>alert('Message successfully deleted.');</script>";
 
-  }
-
+ }
   require('db_connection.php'); 
-  $sql = "SELECT * FROM announcement ORDER BY announceDate DESC ";
+  $sql = "SELECT * FROM contact ";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
   
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['announceDate']}</td><td >{$row['content']}</td><td style='width: 50px;'><form action='announcements.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["contentId"]."'/></form></td></tr></br>";
+        echo "<tr><td>{$row['user_name']}</td><td>{$row['request_complaint']}</td><td >{$row['request_complaint_date']}</td><td style='width: 50px;'><form action='contact.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["id"]."'/></form></td></tr></br>";
     }
     
 } else {
   echo "0 results";
 }
 $connection->close();
-
- ?>
-  
-
-
+?>
 </body>
 </html>

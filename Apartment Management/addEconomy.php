@@ -12,7 +12,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-    <body style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%;display: none;">
+    <body style="display: none;">
         <style>
             .form{
 	background:#f1f1f1; width:470px; margin:0 auto; padding-left:50px; padding-top:20px; margin-top: 15%;
@@ -65,7 +65,7 @@ if(!$loginResult){
         $successMsg="";
         function clearForm()
         {
-            $_POST["type"]="";
+
             $_POST["gbuf"]="";
             $_POST["amount"]="";
         }
@@ -79,12 +79,6 @@ if(!$loginResult){
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errorCount=0;
             $successMsg="";
-            if(empty($_POST["type"])){
-                $typeErr="Type is required.";
-                $errorCount++;
-            }else{
-                $type=$_POST["type"];
-            }
             if(empty($_POST["gbuf"])){
                 $gbufErr="This is required.";
                 $errorCount++;
@@ -103,7 +97,7 @@ if(!$loginResult){
             }
             if($errorCount==0){
                 require('db_connection.php');
-                $query = "INSERT INTO `economy`(`type`, `used`, `amount`) VALUES ( '".$type."','".$gbuf."','".$amount."')";
+                $query = "INSERT INTO `income`(`explanation`, `income_amount`) VALUES ('".$gbuf."','".$amount."')";
                 $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
                 $successMsg="Information saved.";
                 clearform();
@@ -123,15 +117,9 @@ if(!$loginResult){
         }
     ?>
     <form id="contactform" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"> 
-    	    <p class="contact"><label >Type<small style="color:red;" >* <?php echo $typeErr ?></small></label></p> 
-            <select class="select-style gender" name="type" value="<?php echo isset($_POST["type"]) ? $_POST["type"] : ''; ?>" >
-            <option value="select">Please select type of money.</option>
-            <option value="Income">Income</option>
-            <option value="Expense">Expense</option>
-            </select><br><br>
-            <p class="contact"><label >Get by/Used for<small style="color:red;" >* <?php echo $gbufErr ?></small></label></p> 
+            <p class="contact"><label >Explanation<small style="color:red;" >* <?php echo $gbufErr ?></small></label></p> 
             <input name="gbuf"  type="text" value="<?php echo isset($_POST["gbuf"]) ? $_POST["gbuf"] : ''; ?>" >
-            <p class="contact"><label >Amount<small style="color:red;" >* <?php echo $amountErr ?></small></label></p> 
+            <p class="contact"><label >Income Amount<small style="color:red;" >* <?php echo $amountErr ?></small></label></p> 
             <input name="amount"  type="text" value="<?php echo isset($_POST["amount"]) ? $_POST["amount"] : ''; ?>" >
              
             <input class="buttom" name="submit" id="submit" tabindex="50" value="Submit" type="submit"> 
