@@ -117,6 +117,7 @@ if(!$loginResult){
             $query = "UPDATE due SET payment_date='$date', paid_amount='$paid', remaining_debt='$sum' WHERE door_number='$id'";
             $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
             $succesMessage="Payment received.";
+            header('Location:dues.php ');
         }else{
             $succesMessage="Payment could not recieved.";
 

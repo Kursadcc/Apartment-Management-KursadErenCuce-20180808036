@@ -225,6 +225,7 @@ if(!$loginResult){
             $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
             $succesMessage="Information saved.";
             clearform();
+            header('Location:showList.php');
         }else{
             $succesMessage="Information could not be saved.";            
         }

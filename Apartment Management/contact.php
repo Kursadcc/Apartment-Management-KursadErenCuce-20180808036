@@ -211,7 +211,7 @@ a:hover {
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"> </script>
 <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' /></br>
-<h1 style="margin-left: 32%;" >Apartment Management<img src="logo.png" alt="logo"></h1>
+<h1 style="margin-left: 32%;" ><img src="logo.png" alt="logo">Apartment Management</h1>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -242,14 +242,18 @@ a:hover {
         </li>
       </ul>
     </div>
-    <p style="margin-right:2%;color:white;" class="nav-item" >Logged in: <?php echo $_SESSION['userName']; ?></p>
+    <p style="margin-right:2%;color:white;" class="nav-item" ><?php echo $_SESSION['userName']; ?></p>
     <button style="width:129px" class="btn btn-danger"><a style="margin-right:2%;color:white;" class="nav-link" href="logout.php">Log out</a></button>
   </nav>
-  <table style="width:70%;margin-left:15%;"  class="table table-striped table-hover ">
+  <div style="width:70%;margin-left:15%;background-color:rgb(240,240,240);" >
+  <table class="table table-striped table-hover ">
   <tr style='background-color:rgb(25, 21, 53);color:white;'>
     <th>User Name</th>
-    <th>Request/Complaint</th>
-    <th>Share Date</th>
+    <th>Title</th>
+    <th>Content</th>
+    <th>Contact Phone Number</th>
+    <th>Contact email</th>
+    <th>Date</th>
     <th></th>
   </tr>
 
@@ -279,7 +283,7 @@ a:hover {
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['user_name']}</td><td>{$row['request_complaint']}</td><td >{$row['request_complaint_date']}</td><td style='width: 50px;'><form action='contact.php' method='post'><input class='btn btn-primary' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["id"]."'/></form></td></tr></br>";
+        echo "<tr><td>{$row['user_name']}</td><td>{$row['title']}</td><td >{$row['content']}</td><td >{$row['contact_phone_number']}</td><td >{$row['contact_email']}</td><td >{$row['created_date']}</td><td style='width: 50px;'><form action='contact.php' method='post'><input class='btn btn-danger' type='submit' name='delete' value='Delete' /><input type='hidden' name='id' value='".$row["id"]."'/></form></td></tr></br>";
     }
     
 } else {
@@ -287,5 +291,7 @@ a:hover {
 }
 $connection->close();
 ?>
+  </table>
+  </div>
 </body>
 </html>

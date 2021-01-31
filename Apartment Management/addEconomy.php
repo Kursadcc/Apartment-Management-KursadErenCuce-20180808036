@@ -103,6 +103,7 @@ if(!$loginResult){
                 $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
                 $successMsg="Information saved.";
                 clearform();
+                header('Location:economy.php');
             }else{
                 $succesMessage="Information could not be saved.";
             }
