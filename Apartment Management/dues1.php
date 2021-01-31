@@ -2,9 +2,11 @@
 require("control.php");
 $loginResult=checkLogin();
 if(!$loginResult){
-    header("Refresh: 2; url=loginPage.php");
+  header("Refresh: 2; url=loginPage.php");
+}else if($_SESSION["role"]!="user"){
+  header("Refresh: 2; url=loginPage.php");
 }else{
-    echo '<style type="text/css">
+  echo '<style type="text/css">
     body {
         display: block!important;
     }
@@ -12,7 +14,7 @@ if(!$loginResult){
 }
 ?>
 <html>
-<body id="body" style="background: url('https://www.dreamtemplate.com/dreamcodes/bg_images/color/c12.jpg');background-repeat: no-repeat; background-size: 100% 100%; display: none;">
+<body id="body" style="display: none;">
 <style>
 #customers {
   font-family: Arial, Helvetica, sans-serif;
@@ -208,19 +210,27 @@ a:hover {
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"> </script>
-<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' />
+<link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' /></br>
+<h1 style="margin-left: 32%;" ><img src="logo.png" alt="logo">Apartment Management</h1>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Apartment Management</a>
+    <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item ">
           <a class="nav-link" href="announcements1.php">Announcements</a>
         </li>
+        <li>
+          <a class="nav-link" href="contact1.php">Contact</a>
+        </li>
+      </ul>
+    </div>
+    <div style="margin-left:0%;" class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
         <li class="nav-item ">
-          <a class="nav-link" href="economy1.php">Economy</a>
+          <a class="nav-link" href="economy1.php">Income/Expense</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="dues1.php">Dues<span class="sr-only">(current)</span></a>
@@ -230,28 +240,62 @@ a:hover {
         </li>
         
         <li class="nav-item" style="margin-right:10px;">
-          <a class="nav-link" href="logout.php">Log out</a>
         </li>
       </ul>
     </div>
-  </nav>
+    <p style="margin-right:2%;color:white;" class="nav-item" ><?php echo $_SESSION['userName']; ?></p>
+    <button style="width:129px" class="btn btn-danger"><a style="margin-right:2%;color:white;" class="nav-link" href="logout.php">Log out</a></button>
+  </nav></br></br>
+  <?php 
+  require('db_connection.php');
+  if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if (preg_match("/^[0-9-' ]*$/", $_POST["due"])) {
+      $due=$_POST["due"];
+      $query = "UPDATE due SET  remaining_debt=remaining_debt+$due ";
+      $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
+    }else{
+      echo "<script>alert('Due should be number.');</script>";
+    }
+  }
+  ?>
 
-  <table id="customers">
-  <tr>
+  <ul style="border-color:#222;width:70%;margin-left:15%;" class="nav nav-pills nav-fill">
+  <li class="nav-item">
+    <a class="nav-link active" href="dues1.php">Dues</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="dueHistory1.php">Due History</a>
+  </li>
+</ul></br></br>
+
+ 
+  <div style="width:70%;margin-left:15%;background-color:rgb(240,240,240);" >
+  <table class="table table-striped table-hover ">
+  <tr style='background-color:rgb(25, 21, 53);color:white;'>
     <th>Door Number</th>
     <th>Payment Date</th>
     <th>Paid Amount</th>
     <th>Remaining Debt</th>
+    <th></th>
   </tr>
 <?php
   require('db_connection.php');
-  $sql = "SELECT * FROM dues";
+  $userName=$_SESSION["userName"];
+  $sql1="SELECT doornumber FROM resident WHERE user_name='$userName'";
+  $result1=mysqli_query($connection, $sql1) or die(mysqli_error($connection));
+  if ($result1->num_rows > 0) {
+    $row = $result1->fetch_assoc();
+    $doorNumber=$row['doornumber'];
+} else {
+    echo "0 results";
+}
+  $sql = "SELECT * FROM due WHERE door_number='$doorNumber'";
   $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
   
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>NO: {$row['doorNumber']}</td><td>{$row['datePaid']}</td><td>{$row['quantity']} ₺</td><td>{$row['debt']} ₺</td></tr>";
+        echo "<tr><td>NO: {$row['door_number']}</td><td>{$row['payment_date']}</td><td>{$row['paid_amount']} ₺</td><td>{$row['remaining_debt']} ₺</td></tr>";
     }
 } else {
     echo "0 results";
@@ -259,6 +303,7 @@ a:hover {
 $connection->close();
       
 ?>
-
+  </table>
+  </div>
 </body>
 </html>

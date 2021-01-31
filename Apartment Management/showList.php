@@ -250,7 +250,7 @@ a:hover {
     <a class="nav-link active" href="showList.php">Current Residents</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="movedList.php">Moved Residents</a>
+    <a class="nav-link" href="movedList.php">Moved out Residents</a>
   </li>
 </ul></br></br>
 <button style="margin-left: 81.5%;" onclick="location.href='addListUpdated.php'" class="btn btn-success">+Add</button>

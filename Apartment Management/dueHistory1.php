@@ -246,6 +246,14 @@ a:hover {
     <p style="margin-right:2%;color:white;" class="nav-item" ><?php echo $_SESSION['userName']; ?></p>
     <button style="width:129px" class="btn btn-danger"><a style="margin-right:2%;color:white;" class="nav-link" href="logout.php">Log out</a></button>
   </nav></br></br>
+  <ul style="border-color:#222;width:70%;margin-left:15%;" class="nav nav-pills nav-fill">
+  <li class="nav-item">
+    <a class="nav-link" href="dues1.php">Dues</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="dueHistory1.php">Due History</a>
+  </li>
+</ul></br></br>
   <div style="width:70%;margin-left:15%;background-color:rgb(240,240,240);" >
 <table  class="table table-striped table-hover ">
   <tr style='background-color:rgb(25, 21, 53);color:white;'>
