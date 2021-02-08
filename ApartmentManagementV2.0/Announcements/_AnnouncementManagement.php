@@ -3,12 +3,9 @@ require("../dbConnection.php");
 $sql = "SELECT * FROM announcements WHERE isActive='1' ORDER BY createDate DESC";
 $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
 ?>
-
-
-
 <h1 class="h3 mb-3">Announcement Management</h1>
 <div class="row">
-	<div class="col-12 col-sm-9">
+	<div class="col-6">
 		<div class="card">
 			<div class="card-header">
 				<h5 class="card-title">Announcement Add/Edit Form</h5>
@@ -23,7 +20,7 @@ $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Content</label>
-						<textarea type="text" class="form-control" placeholder="Content" rows="10" id="Content" name="Content"></textarea>
+						<textarea type="text" class="form-control" placeholder="Content" rows="5" id="Content" name="Content"></textarea>
 					</div>
 					<button type="submit" class="btn btn-info align-self-end">Submit</button></br>
 				</form>

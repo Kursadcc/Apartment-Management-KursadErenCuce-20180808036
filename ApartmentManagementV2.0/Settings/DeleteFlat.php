@@ -1,4 +1,3 @@
-
 <?php
 require("../control.php");
 $loginResult = checkLogin();
@@ -7,7 +6,7 @@ if (!$loginResult) {
 } else if ($_SESSION["isManager"] != "1") {
     $title = 'Warning!';
     $layout = __DIR__ . '../layout.php';
-    $selectedMenu = "AnnouncementManagement";
+    $selectedMenu = "FlatManagement";
     $content = '../notManagerWarning.php';
     require_once '../layout.php';
 } else {
@@ -15,11 +14,11 @@ if (!$loginResult) {
     {
         require('../dbConnection.php');
 
-        $sql1 = "UPDATE announcements SET isActive=0  WHERE id=$data";
+        $sql1 = "DELETE FROM flats WHERE id=$data";
         $result1 = mysqli_query($connection, $sql1) or die(mysqli_error($connection));
-        $sql2 = "SELECT * FROM announcements WHERE id=$data";
+        $sql2 = "SELECT * FROM incometypes WHERE id=$data";
         $result2 = mysqli_query($connection, $sql2) or die(mysqli_error($connection));
-            echo "<script>alert('Announcement successfully deleted.');</script>";
+            echo "<script>alert('Flat successfully deleted.');</script>";
     }
 
     $id = "";
@@ -28,12 +27,12 @@ if (!$loginResult) {
    
 
     require('../dbConnection.php');
-    $sql = "SELECT * FROM announcements Where isActive = 1 ORDER BY createDate DESC ";
+    $sql = "SELECT * FROM flats";
     $result = mysqli_query($connection, $sql) or die(mysqli_error($connection));
-    $title = 'Announcements';
+    $title = 'Income Types';
     $layout = __DIR__ . '../layout.php';
-    $content = 'Announcements/_AnnouncementManagement.php';
-    $selectedMenu = "AnnouncementManagement";
+    $content = 'Settings/_FlatManagement.php';
+    $selectedMenu = "FlatManagement";
     require_once '../layout.php';
 }
 
