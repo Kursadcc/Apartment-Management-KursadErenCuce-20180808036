@@ -1,1 +1,0 @@
-<h1 class="h3 mb-3">Only manager can see this page!</h1>
