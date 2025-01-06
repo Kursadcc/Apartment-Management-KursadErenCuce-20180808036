@@ -1,0 +1,126 @@
+<?php
+require("../dbConnection.php");
+$userId=$_SESSION["id"];
+$flat="SELECT*FROM residents WHERE id='$userId'";
+$resultFlat = mysqli_query($connection, $flat) or die(mysqli_error($connection));
+if($resultFlat->num_rows>0){
+    while($rowFlat=$resultFlat->fetch_assoc()){
+        $flatId=$rowFlat["flatId"];
+    }
+}
+$query1 = "SELECT*FROM flatdues WHERE isPaid=1 and flatId='$flatId'";
+$result1 = mysqli_query($connection, $query1) or die(mysqli_error($connection));
+?>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Dues</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-hover" id="FlatDueTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Door Number</th>
+                            <th>Due Date</th>
+                            <th>Amount</th>
+                            <th>Payment Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $rowCount = 0;
+                        if ($result1->num_rows > 0) {
+                            $rowCount = 0;
+                            while ($row = $result1->fetch_assoc()) {
+                                $rowCount++;
+                                $flatId1 = $row["flatId"];
+                                $dueId = $row["dueId"];
+                                $query2 = "SELECT*FROM flats WHERE id='$flatId1'";
+                                $result2 = mysqli_query($connection, $query2) or die(mysqli_error($connection));
+                                if ($result2->num_rows > 0) {
+                                    while ($row1 = $result2->fetch_assoc()) {
+                                        $doorNumber = $row1["doorNumber"];
+                                    }
+                                }
+                                $query3 = "SELECT*FROM dues WHERE id='$dueId'";
+                                $result3 = mysqli_query($connection, $query3) or die(mysqli_error($connection));
+                                if ($result3->num_rows > 0) {
+                                    while ($row2 = $result3->fetch_assoc()) {
+                                        $year = $row2["year"];
+                                        $month = $row2["month"];
+                                        $amount = $row2["amount"];
+                                    }
+                                }
+                                echo "<tr><td>{$rowCount}</td><td>NO: {$doorNumber}</td><td >{$year}-{$month}</td><td>{$amount} ₺</td><td>{$row['paymentDate']}<i class='align-middle mr-2' data-feather='check'></i></td><td></td></tr>";
+                            }
+                        }
+                        $query4 = "SELECT*FROM flatdues WHERE isPaid=0 and flatId='$flatId'";
+                        $result4 = mysqli_query($connection, $query4) or die(mysqli_error($connection));
+                        if ($result4->num_rows > 0) {
+                            $rowCountNotPaid = $rowCount;
+                            while ($notPaidRow = $result4->fetch_assoc()) {
+                                $dueId = $notPaidRow["dueId"];
+                                $flatId1 = $notPaidRow["flatId"];
+                                $query2 = "SELECT*FROM flats WHERE id='$flatId1'";
+                                $result2 = mysqli_query($connection, $query2) or die(mysqli_error($connection));
+                                if ($result2->num_rows > 0) {
+                                    while ($row1 = $result2->fetch_assoc()) {
+                                        $doorNumber = $row1["doorNumber"];
+                                    }
+                                }
+                                $query3 = "SELECT*FROM dues WHERE id='$dueId'";
+                                $result3 = mysqli_query($connection, $query3) or die(mysqli_error($connection));
+                                if ($result3->num_rows > 0) {
+                                    while ($row2 = $result3->fetch_assoc()) {
+                                        $year = $row2["year"];
+                                        $month = $row2["month"];
+                                        $amount = $row2["amount"];
+                                    }
+                                }
+                                $rowCountNotPaid++;
+                                echo "<tr><td>{$rowCountNotPaid}</td><td>NO: {$doorNumber}</td><td >{$year}-{$month}</td><td>{$amount} ₺</td><td>{$notPaidRow['paymentDate']}   <i class='align-middle mr-2' data-feather='x'></i></td><td>". 
+                                "<a href='../FlatDues/PayDue.php?id=" . urlencode($notPaidRow['id']) . "' ><i class='align-middle' data-feather='credit-card'></i> Pay</a>" .
+                                "</td></tr>";
+                            }
+                        }
+
+
+                        ?>
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+        $("#FlatDueTable").DataTable({
+            "iDisplayLength": 20,
+            "lengthMenu": [
+                [20, 50, 100, -1],
+                [20, 50, 100, "All"]
+            ],
+            "pageLength": 20,
+            "sDom": 'TlfBrtip',
+            "proccessing": true,
+
+        });
+        $("#incomeList").DataTable({
+            "iDisplayLength": 20,
+            "lengthMenu": [
+                [20, 50, 100, -1],
+                [20, 50, 100, "All"]
+            ],
+            "pageLength": 20,
+            "sDom": 'TlfBrtip',
+            "proccessing": true,
+
+        });
+    });
+</script>
